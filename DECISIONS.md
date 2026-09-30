@@ -41,3 +41,47 @@ error.
 Raw pull cached at `data/raw/spy_ohlc.parquet` (Parquet, via pyarrow) rather
 than re-querying yfinance's API on every script run. Parquet preserves the
 datetime index and column dtypes, unlike CSV.
+
+## Scope and Limitations: Reactive detection, not event prediction
+Date: 2026-09-29
+
+**Context**
+Market volatility regime shifts are often triggered by real-world events
+(rate decisions, geopolitical shocks, earnings surprises, corporate
+failures) that are not knowable in advance from price data alone. It is
+important to be precise about what this project can and cannot claim.
+
+**Scope statement**
+This project detects regime shifts as they manifest in price and return
+data. It does not predict the underlying events that cause those shifts,
+and it makes no claim to anticipate news, policy decisions, or other
+unannounced real-world triggers before they occur.
+
+**Rationale**
+The system has no access to any information beyond historical price data
+(and derived quantities such as returns and realized volatility). It
+cannot see news, earnings calendars, or macroeconomic releases. When an
+unannounced event occurs, its effects appear in the data almost
+immediately, as unusual price moves and a spike in realized volatility.
+The system's job is to recognize that reaction pattern and flag it as
+early as possible after it starts appearing, not to foresee the event
+itself before it happens.
+
+This mirrors the explicit scope of the quickest change-point detection
+literature (CUSUM, Shiryaev-Roberts) and the ECTS/ECOTS literature: both
+fields are built around minimizing the delay between "the change begins
+manifesting in observable data" and "the system detects it," not
+predicting the cause of the change in advance. This is a well-established,
+legitimate research problem in its own right, not a workaround for a
+missing capability.
+
+**What this means practically**
+- The system is a fast-reaction tool, analogous to a smoke detector: it
+  notices the effects of a shock quickly, it does not predict the shock.
+- Event-driven or NLP-based forecasting (news sentiment, economic
+  calendars, earnings surprise models) is explicitly out of scope for this
+  project and would require a fundamentally different data source and
+  model design.
+- This scope should be stated plainly in any write-up, portfolio
+  presentation, or PhD application material referencing this project, to
+  avoid overclaiming predictive power the system does not have.
